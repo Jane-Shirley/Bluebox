@@ -1,0 +1,149 @@
+<!--
+	Project Bluebox
+	2015, University of Stuttgart, IPVS/AS
+-->
+
+<!--
+	Project Bluebox 
+	
+	Copyright (C) <2015> <University of Stuttgart>
+	
+	This software may be modified and distributed under the terms
+	of the MIT license.  See the LICENSE file for details.
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<link href="static/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="static/Alert.CSS">
+	<link rel="stylesheet" type="text/css" href="static/w3.CSS">
+	<script type="text/javascript" src="/static/jquery-1.7.2.js"></script>
+	<script type="text/javascript" src="static/jquery.min.js"></script>  
+	
+	<script type="text/javascript" src="static/bluebox.js"></script>
+	
+	<script type="text/javascript" src="static/datepicker.css"></script>
+	<script type="text/javascript" src="static/jquery-ui.min"></script>
+	<script type="text/javascript" src="static/jquery.cookie.js"></script>
+	<script type="text/javascript" src="static/bootstrap-dialog.min"></script>
+	 <meta name="viewport" content="width=device-width, initial-scale=1"> 
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> -->
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
+	<script>
+	  $("#retentionDate").datepicker({
+		  changeMonth: true,
+		  changeYear: true
+	  });
+	 </script>
+
+	 
+</head>
+<body>
+<div class="container" id="containerDiv">
+
+<!-- <div id="logout" style="cursor:pointer;color:blue;text-decoration:underline;float:right">logout</div>  -->
+<div style="float:right">
+<button id="logout" type="button" class="btn btn-success">Logout</button>
+</div>
+ <div class="form-group">
+		<div class="header">
+		     <div><img src="static/Blueboxflag.jpg" style="width:104px;height:80px;" align="left" /></div>
+			<div><h1 class="text-muted" style="float: left; width: 33%; color:Blue">BlueBox File System</h1></div>
+			
+			
+			<!--<input type="button" onclick="getdata()" value="Load Table" /> -->
+		</div>
+		<hr/>
+		<div class="panel panel-default">
+			<div class="panel-heading" id = "createContainerDiv" ><h3>Create Container</h3></div>
+			<form action="/create" method="post" id="createContainerForm" name ="createContainerForm" enctype="multipart/form-data">
+				<label for="containerTxt" id="containerLbl">Container name:</label>
+				<input type="text" name="containerName" class="form-control" id="containerTxt" placeholder="ContainerName">				
+				<input type="submit" value="Create"  class="btn btn-success" id ="createBtn">
+			</form>
+			<div class="panel-heading" id = "uploadObjectDiv"><h3>Upload an object</h3></div>
+		
+			<input type="text" id="contSearch"  placeholder="Filter Containers" onKeyup="filterFunction()">
+            
+		    <form action="/upload" method="post" id = "uploadObjectForm" name ="uploadObjectForm" enctype="multipart/form-data" target="dummyframe">
+				<label for="browseBtn" id = "browseLbl">Browse the file to upload:</label>
+                <input type="file" name="objectName" id="browseBtn"/>
+                <label for="containerTxt" id="containerLbl">Container name:</label>
+				<input type="text" name="containerNameUp" class="form-control" id="containerTxtUp" placeholder="ContainerNameUp" readonly/>
+				<label for="ownerTxt" id="ownerLbl">Owner Name:</label>
+				<input type="text" name="OwnerName" class="form-control" id="ownerTxt" placeholder="OwnerName"/>
+				
+				<label for="retentionDate" id="retentionLbl">Retention Date:</label> 
+				<input type="date" name ="RetentionPeriod" class="form-control"  id="retentionDate"/>
+				<input type="submit" value="Upload"  class="btn btn-success" id ="uploadBtn"/>
+			</form>			
+		</div>
+	<input type="text" id="objSearch"  placeholder="Filter objects"  onKeyup="filterObjectFunction()">
+	<br>
+	<div class='btn-group'>
+		<button type='button' class='btn btn-info' onclick='backToContainer()' id='backBtn'>&lt;&lt;&lt;Back to containers&lt;&lt;&lt;</button>
+		<button type='button' class='btn btn-info' onclick='CheckOldFiles()' id='checkOldFilesBtn'>Check Old Files</button>
+		<button type='button' class='btn btn-info' onclick='DeleteOldFiles()' id='deleteOldFilesBtn'>Delete Old Files</button>
+	</div>	 	
+		
+	<div class="panel panel-default">
+	<div id="SwiftTableHeading" class="panel-heading"><h3>null</h3></div>
+	
+	<table id="swiftList" class="table table-bordered table-hover " border="2">
+	       <div id="demo11" class="collapse">
+                   <div class="panel-body"   id="demo5"><b></b></div>
+                   <div class="panel-footer" id="demo6"></div>
+                   <div class="panel-body"   id="demo7"></div>
+	       </div>
+	   
+     
+	</table>
+	
+	</div>
+	
+</div>
+<div class="alert alert-success" id="SuccessAlert">
+<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+</div>
+ <div class="alert alert-danger" id="ErrorAlert">
+ <a class="close" data-dismiss="alert" href="#">&times;</a>
+  </div>
+ <div id="loginDiv" style="display:none">
+<div class="w3-container" style="padding:190px;padding-left:500px">
+	<div class="w3-card-12" style="width:50%;">
+	
+	<div class="w3-container w3-teal">
+		<h2>Please log in</h2>
+	</div>
+	<div class="w3-container" id="loginDiv">	
+		<p>
+		<label>Username</label>
+		<input class="w3-input" type="text" id="username">
+		</p>
+		<p>
+		<label>Password</label>
+		<input class="w3-input" type="password" id="password">
+		</p>
+		<p>
+		<input class="w3-btn w3-teal" type="submit" onClick="onLogin()"></p>
+	</div>
+	</div>
+	</div>
+	
+</div>
+
+<iframe width="0" height="0" border="0" id="dummyframe" name="dummyframe"></iframe>
+
+<p id="demo"></p>
+ 
+
+
+    
+    
+</body>
+</html>
+ 
